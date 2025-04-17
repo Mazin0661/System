@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daily Schedule</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon-shadow.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+  <style>
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('bg-portal.jpg') center center / cover no-repeat;
+      opacity: 0.1;
+      z-index: -1;
+    }
+
+    .entry {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .entry:hover {
+      transform: scale(1.02);
+      box-shadow: 0 0 12px #00cfffaa;
+    }
+
+    h1 {
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow {
+      from {
+        text-shadow: 0 0 8px #00cfff;
+      }
+      to {
+        text-shadow: 0 0 16px #00f7ff, 0 0 32px #0088ff;
+      }
+    }
+
+    .welcome {
+      position: fixed;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2rem;
+      color: #00cfff;
+      font-family: 'Orbitron', sans-serif;
+      opacity: 0;
+      animation: fadeInOut 3s ease-in-out;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    @keyframes fadeInOut {
+      0% { opacity: 0; }
+      20% { opacity: 1; }
+      80% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    .actions {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+
+    button {
+      background: #0c1b2f;
+      color: #00cfff;
+      border: 1px solid #00cfff88;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-family: 'Orbitron', sans-serif;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #132640;
+    }
+  </style>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js');
+      });
+    }
+
+    function exportData() {
+      const keys = Object.keys(localStorage).filter(key => key.startsWith('schedule_'));
+      const data = {};
+      keys.forEach(key => data[key] = localStorage.getItem(key));
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'shadow-scheduler-backup.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function importData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const imported = JSON.parse(e.target.result);
+        Object.keys(imported).forEach(key => {
+          if (key.startsWith('schedule_')) {
+            localStorage.setItem(key, imported[key]);
+          }
+        });
+        alert('Data imported! Refresh the page to view changes.');
+      };
+      reader.readAsText(file);
+    }
+
+    let audioInitialized = false;
+    function initAudioOnce() {
+      if (audioInitialized) return;
+      audioInitialized = true;
+
+      const welcome = document.createElement('div');
+      welcome.className = 'welcome';
+      welcome.innerText = 'Welcome, Master';
+      document.body.appendChild(welcome);
+      setTimeout(() => welcome.remove(), 3500);
+
+      const synth = window.speechSynthesis;
+      const utter = new SpeechSynthesisUtterance('Welcome, Master');
+      const voices = synth.getVoices();
+      utter.voice = voices.find(voice => voice.name.toLowerCase().includes('female') || voice.name.toLowerCase().includes('english')) || voices[0];
+      utter.pitch = 1.2;
+      utter.rate = 1.1;
+      synth.speak(utter);
+
+      const bgAudio = new Audio('bg-theme.mp3');
+      bgAudio.volume = 0.4;
+      bgAudio.loop = true;
+      bgAudio.play();
+    }
+  </script>
+</head>
+<body onclick="initAudioOnce()" style="cursor: pointer;">
+  <div class="container">
+    <h1>🕶️ Shadow Scheduler</h1>
+    <input type="date" id="datePicker">
+    <div id="schedule"></div>
+
+    <div class="actions">
+      <button onclick="exportData()">Export</button>
+      <label style="cursor:pointer;">
+        <input type="file" accept="application/json" onchange="importData(event)" style="display:none">
+        <button>Import</button>
+      </label>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
+

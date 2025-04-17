@@ -1,0 +1,91 @@
+/* styles.css - Solo Leveling Theme */
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+
+body {
+  margin: 0;
+  font-family: 'Orbitron', sans-serif;
+  background: linear-gradient(to bottom, #0a0f1c, #131e35);
+  color: #e0e0ff;
+  padding: 1rem;
+}
+
+.container {
+  max-width: 700px;
+  margin: auto;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 1rem;
+  padding: 1rem;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+}
+
+h1 {
+  text-align: center;
+  font-size: 1.8rem;
+  color: #00cfff;
+  text-shadow: 0 0 8px #00cfff;
+}
+
+#datePicker {
+  width: 100%;
+  padding: 0.6rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  background: #1b233a;
+  color: #e0e0ff;
+  box-shadow: 0 0 8px #00cfff50;
+}
+
+#schedule {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  row-gap: 0.5rem;
+}
+
+.time-slot {
+  display: contents;
+}
+
+.time-label {
+  padding: 0.5rem;
+  background: #1e2a47;
+  text-align: right;
+  font-size: 0.9rem;
+  color: #8ecfff;
+  border-right: 1px solid #00cfff30;
+}
+
+.entry {
+  padding: 0.5rem;
+  background: #141c2e;
+  border: 1px solid #00cfff20;
+  min-height: 40px;
+  font-size: 0.9rem;
+  color: #fff;
+  outline: none;
+  border-radius: 0.4rem;
+  transition: background 0.3s;
+}
+
+.entry:focus {
+  background: #1c263f;
+  box-shadow: 0 0 10px #00cfff88;
+}
+
+/* Category highlights */
+.study {
+  background-color: #1e3a5f;
+  border-left: 4px solid #29b6f6;
+}
+
+.workout {
+  background-color: #2e3f2f;
+  border-left: 4px solid #66bb6a;
+}
+
+.work {
+  background-color: #4b4031;
+  border-left: 4px solid #ffca28;
+}
